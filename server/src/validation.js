@@ -7,6 +7,7 @@ const name = z.string().trim().min(2).max(80).regex(/^[^\u0000-\u001f\u007f]+$/u
 const password = z.string().min(10, 'Use at least 10 characters.').max(72).refine(value => Buffer.byteLength(value, 'utf8') <= 72, 'Password must use at most 72 UTF-8 bytes.').regex(/[a-z]/, 'Include a lowercase letter.').regex(/[A-Z]/, 'Include an uppercase letter.').regex(/\d/, 'Include a number.');
 const email = z.string().trim().toLowerCase().email().max(254);
 export const registerSchema = z.object({ name, email, password }).strict();
+export const profileSchema = z.object({ name }).strict();
 export const loginSchema = z.object({ email, password: z.string().min(1).max(72).refine(value => Buffer.byteLength(value, 'utf8') <= 72, 'Password must use at most 72 UTF-8 bytes.') }).strict();
 export const accountSchema = z.object({ name: name.max(60) }).strict();
 export const amountSchema = z.string().regex(/^(?:0|[1-9]\d{0,8})(?:\.\d{1,2})?$/, 'Enter a positive INR amount with at most two decimal places.').refine(value => {
