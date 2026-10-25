@@ -1,0 +1,23 @@
+name: Verify Vault
+on:
+  push:
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      MONGOMS_DISABLE_POSTINSTALL: '1'
+      MONGOMS_VERSION: '7.0.24'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: .local/mongodb-binaries
+          key: mongodb-${{ runner.os }}-7.0.24
+      - run: npm ci
+      - run: npm run check

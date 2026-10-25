@@ -1,0 +1,21 @@
+{
+  "name": "vault-bank",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["server", "client"],
+  "engines": { "node": ">=22.12.0" },
+  "config": { "mongodbMemoryServer": { "downloadDir": "./.local/mongodb-binaries", "version": "7.0.24", "disablePostinstall": true } },
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB -c cyan,green \"npm run dev -w server\" \"npm run dev -w client\"",
+    "demo": "node scripts/demo.mjs",
+    "setup": "node scripts/setup.mjs",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "test": "npm run test:client && npm run test -w server",
+    "test:client": "node --test client/test/*.test.mjs",
+    "check": "npm run typecheck -w client && npm test && npm run build",
+    "db:check": "npm run db:check -w server"
+  },
+  "devDependencies": { "concurrently": "^9.2.1", "mongodb-memory-server": "^10.2.3" }
+}
