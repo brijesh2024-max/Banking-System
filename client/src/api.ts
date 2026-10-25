@@ -1,4 +1,4 @@
-export type User = { id: string; name: string; email: string; createdAt: string };
+export type User = { id: string; name: string; email: string; createdAt: string; dob?: string | null };
 export type Account = { id: string; accountNumber: string; name: string; currency: 'INR'; type: 'SAVINGS'; balancePaise: number; createdAt: string };
 export type Transaction = { id: string; reference: string; type: 'transfer' | 'deposit'; direction: 'credit' | 'debit'; amountPaise: number; description: string; createdAt: string; status: 'completed'; from: { accountNumber: string; name: string } | null; to: { accountNumber: string; name: string }; accountId: string };
 export type Dashboard = { accounts: Account[]; summary: { totalBalancePaise: number; incomePaise: number; expensePaise: number; transactionCount: number }; recentTransactions: Transaction[]; activity: { date: string; label: string; incomePaise: number; expensePaise: number }[]; sandbox: boolean };
