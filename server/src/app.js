@@ -13,7 +13,7 @@ import path from 'node:path';
 import { User, Account, LedgerEntry, RevokedToken } from './models.js';
 import { databaseConnected, transactionOptions } from './db.js';
 import { AppError, notFound, errorHandler } from './errors.js';
-import { validate, registerSchema, loginSchema, accountSchema, accountId, accountNumber, transferSchema, fundSchema, idempotencySchema, filterSchema } from './validation.js';
+import { validate, registerSchema, profileSchema, loginSchema, accountSchema, accountId, accountNumber, transferSchema, fundSchema, idempotencySchema, filterSchema } from './validation.js';
 import { userDto, accountDto, transactionDto, newAccountNumber, listAccounts, moveMoney, history, dashboard } from './banking.js';
 import { createReceipts } from './receipts.js';
 
@@ -82,6 +82,12 @@ export function createApp(config) {
     res.json({ user: userDto(user) });
   });
   app.get('/api/auth/me', authenticated, (req, res) => res.json({ user: userDto(req.user) }));
+  app.patch('/api/auth/me', authenticated, async (req, res) => {
+    const input = validate(profileSchema, req.body);
+    const user = await User.findByIdAndUpdate(req.user._id, { $set: { name: input.name } }, { new: true, runValidators: true });
+    if (!user) throw new AppError(401, 'UNAUTHENTICATED', 'Please sign in again.');
+    res.json({ user: userDto(user) });
+  });
   app.post('/api/auth/logout', authenticated, async (req, res) => {
     await RevokedToken.updateOne({ jti: req.sessionToken.jti }, { $setOnInsert: { expiresAt: new Date(req.sessionToken.exp * 1000) } }, { upsert: true });
     res.clearCookie(COOKIE, cookieOptions).json({ message: 'Signed out.' });
